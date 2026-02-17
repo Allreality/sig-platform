@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+
+  sig-ingest:
+    build: .
+    command: uvicorn api.sig_ingest:app --host 0.0.0.0 --port 5010
+    ports: ["5010:5010"]
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - S3_BUCKET=${S3_BUCKET}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - SEV_API_KEY=${SEV_API_KEY}
+      - SIG_KEY_PATH=/var/sig/keys/private.pem
+    volumes:
+      - sig-keys:/var/sig/keys
+      - sig-offchain:/var/sig/offchain
+    restart: unless-stopped
+
+  sig-dnp3-bridge:
+    build: .
+    command: python protocols/dnp3_bridge.py
+    environment:
+      - TLM_HOSTS=${TLM_HOSTS}
+      - INGEST_URL=http://sig-ingest:5010/ingest
+      - POLL_SECONDS=${POLL_SECONDS:-60}
+    depends_on: [sig-ingest]
+    restart: unless-stopped
+
+  sig-modbus-bridge:
+    build: .
+    command: python protocols/modbus_bridge.py
+    environment:
+      - MODBUS_HOSTS=${MODBUS_HOSTS}
+      - INGEST_URL=http://sig-ingest:5010/ingest
+      - POLL_SECONDS=${POLL_SECONDS:-60}
+    depends_on: [sig-ingest]
+    restart: unless-stopped
+
+  sig-smartline-poller:
+    build: .
+    command: python protocols/smartline_poller.py
+    environment:
+      - SMARTLINE_API_URL=${SMARTLINE_API_URL}
+      - SMARTLINE_API_KEY=${SMARTLINE_API_KEY}
+      - LINE_SECTIONS=${LINE_SECTIONS}
+      - INGEST_URL=http://sig-ingest:5010/ingest
+      - POLL_SECONDS=${POLL_SECONDS:-300}
+    depends_on: [sig-ingest]
+    restart: unless-stopped
+
+volumes:
+  sig-keys:
+  sig-offchain:
