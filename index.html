@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Total Reality Global — Compliance Intelligence for Critical Infrastructure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    /* Midnight section */
+    --mid-bg:      #06090F;
+    --mid-surface: #0C1220;
+    --mid-border:  #1A2A45;
+    --mid-accent:  #2E6FE8;
+    --mid-glow:    #1A4FA0;
+    --mid-text:    #E8EDF5;
+    --mid-muted:   #6B7FA0;
+    /* SIG section */
+    --sig-bg:      #0F0C07;
+    --sig-surface: #1A1408;
+    --sig-border:  #3A2E18;
+    --sig-accent:  #C87A2A;
+    --sig-glow:    #8A4F10;
+    --sig-text:    #F5EDE0;
+    --sig-muted:   #8A7A60;
+    /* Shared */
+    --radius:      4px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Mono', monospace;
+    background: var(--mid-bg);
+    color: var(--mid-text);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ──────────────────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 20px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(6,9,15,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--mid-border);
+    transition: border-color 0.6s, background 0.6s;
+  }
+  nav.sig-mode {
+    background: rgba(15,12,7,0.85);
+    border-bottom-color: var(--sig-border);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--mid-text);
+  }
+  .nav-links { display: flex; gap: 40px; align-items: center; }
+  .nav-links a {
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--mid-muted); text-decoration: none;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--mid-text); }
+  .nav-cta {
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 8px 20px; border: 1px solid var(--mid-accent);
+    color: var(--mid-accent) !important; border-radius: var(--radius);
+    transition: background 0.3s, color 0.3s !important;
+  }
+  .nav-cta:hover { background: var(--mid-accent); color: #fff !important; }
+
+  /* ── HERO ─────────────────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 120px 48px 80px;
+    position: relative; overflow: hidden;
+    background: var(--mid-bg);
+  }
+  .hero-grid {
+    position: absolute; inset: 0; opacity: 0.04;
+    background-image:
+      linear-gradient(var(--mid-border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--mid-border) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .hero-glow {
+    position: absolute; top: -200px; left: -200px;
+    width: 700px; height: 700px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(46,111,232,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--mid-accent); margin-bottom: 32px;
+  }
+  .hero-tag::before {
+    content: ''; width: 24px; height: 1px; background: var(--mid-accent);
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(48px, 7vw, 96px);
+    font-weight: 800; line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--mid-text);
+    max-width: 900px;
+    margin-bottom: 32px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-family: 'Instrument Serif', serif;
+    color: var(--mid-accent);
+  }
+  .hero-sub {
+    font-size: 14px; line-height: 1.7; color: var(--mid-muted);
+    max-width: 520px; margin-bottom: 56px;
+  }
+  .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn-primary {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 14px 32px; background: var(--mid-accent);
+    color: #fff; border: none; border-radius: var(--radius);
+    cursor: pointer; text-decoration: none;
+    transition: background 0.3s, transform 0.2s;
+  }
+  .btn-primary:hover { background: #4A8AF8; transform: translateY(-1px); }
+  .btn-ghost {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 14px 32px; background: transparent;
+    color: var(--mid-muted); border: 1px solid var(--mid-border);
+    border-radius: var(--radius); cursor: pointer; text-decoration: none;
+    transition: border-color 0.3s, color 0.3s;
+  }
+  .btn-ghost:hover { border-color: var(--mid-muted); color: var(--mid-text); }
+
+  .hero-stats {
+    display: flex; gap: 48px; margin-top: 80px;
+    padding-top: 40px; border-top: 1px solid var(--mid-border);
+  }
+  .stat-item {}
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px; font-weight: 700; color: var(--mid-text);
+    letter-spacing: -0.02em;
+  }
+  .stat-label {
+    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--mid-muted); margin-top: 4px;
+  }
+
+  /* ── SECTION SHELL ────────────────────────────────────── */
+  section { padding: 120px 48px; position: relative; }
+
+  .section-tag {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .section-tag::before {
+    content: ''; width: 24px; height: 1px;
+  }
+  .section-h {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 800; line-height: 1.05;
+    letter-spacing: -0.02em; margin-bottom: 20px;
+  }
+  .section-p {
+    font-size: 14px; line-height: 1.8;
+    max-width: 560px; margin-bottom: 48px;
+  }
+
+  /* ── MIDNIGHT SECTION ─────────────────────────────────── */
+  .midnight-section {
+    background: var(--mid-surface);
+    border-top: 1px solid var(--mid-border);
+    border-bottom: 1px solid var(--mid-border);
+  }
+  .midnight-section .section-tag { color: var(--mid-accent); }
+  .midnight-section .section-tag::before { background: var(--mid-accent); }
+  .midnight-section .section-h { color: var(--mid-text); }
+  .midnight-section .section-p { color: var(--mid-muted); }
+
+  .features-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--mid-border);
+    border: 1px solid var(--mid-border);
+    border-radius: var(--radius);
+    overflow: hidden; margin-bottom: 56px;
+  }
+  .feature-card {
+    padding: 36px 32px; background: var(--mid-bg);
+    transition: background 0.3s;
+  }
+  .feature-card:hover { background: var(--mid-surface); }
+  .feature-icon {
+    width: 36px; height: 36px; margin-bottom: 20px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--mid-border); border-radius: var(--radius);
+    font-size: 16px;
+  }
+  .feature-title {
+    font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+    color: var(--mid-text); margin-bottom: 10px;
+  }
+  .feature-desc { font-size: 12px; line-height: 1.7; color: var(--mid-muted); }
+
+  /* ── TRANSITION BAND ──────────────────────────────────── */
+  .transition-band {
+    min-height: 280px; padding: 80px 48px;
+    background: linear-gradient(180deg, var(--mid-surface) 0%, #0D0D0A 50%, var(--sig-surface) 100%);
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .transition-band::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: 
+      radial-gradient(ellipse at 30% 50%, rgba(46,111,232,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 50%, rgba(200,122,42,0.08) 0%, transparent 60%);
+  }
+  .transition-inner { position: relative; z-index: 1; }
+  .transition-divider {
+    display: flex; align-items: center; gap: 24px;
+    justify-content: center; margin-bottom: 24px;
+  }
+  .t-line-blue { width: 120px; height: 1px; background: linear-gradient(90deg, transparent, var(--mid-accent)); }
+  .t-dot { width: 6px; height: 6px; border-radius: 50%; background: #888; }
+  .t-line-copper { width: 120px; height: 1px; background: linear-gradient(90deg, var(--sig-accent), transparent); }
+  .transition-label {
+    font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
+    color: #666; margin-bottom: 16px;
+  }
+  .transition-text {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(22px, 3vw, 36px);
+    color: #AAA; line-height: 1.3; font-style: italic;
+  }
+  .transition-text span.blue { color: var(--mid-accent); font-style: normal; font-family: 'Syne', sans-serif; font-size: 0.7em; vertical-align: middle; }
+  .transition-text span.copper { color: var(--sig-accent); font-style: normal; font-family: 'Syne', sans-serif; font-size: 0.7em; vertical-align: middle; }
+
+  /* ── SIG SECTION ──────────────────────────────────────── */
+  .sig-section {
+    background: var(--sig-surface);
+    border-top: 1px solid var(--sig-border);
+    border-bottom: 1px solid var(--sig-border);
+  }
+  .sig-section .section-tag { color: var(--sig-accent); }
+  .sig-section .section-tag::before { background: var(--sig-accent); }
+  .sig-section .section-h { color: var(--sig-text); }
+  .sig-section .section-p { color: var(--sig-muted); }
+
+  .sig-layout {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px; align-items: start;
+  }
+  .sig-specs {
+    display: flex; flex-direction: column; gap: 1px;
+    background: var(--sig-border); border: 1px solid var(--sig-border);
+    border-radius: var(--radius); overflow: hidden;
+  }
+  .spec-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 24px; background: var(--sig-bg);
+  }
+  .spec-row:hover { background: var(--sig-surface); }
+  .spec-key { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sig-muted); }
+  .spec-val { font-size: 13px; font-weight: 500; color: var(--sig-text); }
+  .spec-val.highlight { color: var(--sig-accent); }
+
+  .sig-features { display: flex; flex-direction: column; gap: 24px; }
+  .sig-feature {
+    padding: 28px; border: 1px solid var(--sig-border);
+    border-radius: var(--radius); background: var(--sig-bg);
+    transition: border-color 0.3s;
+  }
+  .sig-feature:hover { border-color: var(--sig-accent); }
+  .sig-feature-head {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+  }
+  .sig-feature-icon {
+    width: 28px; height: 28px;
+    border: 1px solid var(--sig-border); border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: var(--sig-accent);
+  }
+  .sig-feature-title {
+    font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+    color: var(--sig-text);
+  }
+  .sig-feature-desc { font-size: 12px; line-height: 1.7; color: var(--sig-muted); }
+
+  /* ── PATENT BADGE ─────────────────────────────────────── */
+  .patent-badge {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 12px 20px; border: 1px solid var(--sig-border);
+    border-radius: var(--radius); background: var(--sig-surface);
+    margin-top: 40px;
+  }
+  .patent-badge-icon { font-size: 18px; }
+  .patent-badge-text { font-size: 11px; color: var(--sig-muted); line-height: 1.5; }
+  .patent-badge-text strong { display: block; color: var(--sig-accent); font-size: 12px; letter-spacing: 0.05em; }
+
+  /* ── LEAD CAPTURE ─────────────────────────────────────── */
+  .leads-section {
+    background: var(--sig-bg);
+    border-bottom: 1px solid var(--sig-border);
+    padding: 100px 48px;
+  }
+  .leads-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 40px; max-width: 1100px; margin: 0 auto;
+  }
+  .lead-card {
+    padding: 48px; border-radius: var(--radius);
+    border: 1px solid;
+  }
+  .lead-card.midnight {
+    background: var(--mid-surface);
+    border-color: var(--mid-border);
+  }
+  .lead-card.sig {
+    background: var(--sig-surface);
+    border-color: var(--sig-border);
+  }
+  .lead-type {
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+  }
+  .lead-type::before { content: ''; width: 16px; height: 1px; }
+  .lead-card.midnight .lead-type { color: var(--mid-accent); }
+  .lead-card.midnight .lead-type::before { background: var(--mid-accent); }
+  .lead-card.sig .lead-type { color: var(--sig-accent); }
+  .lead-card.sig .lead-type::before { background: var(--sig-accent); }
+  .lead-title {
+    font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 700;
+    line-height: 1.15; margin-bottom: 16px;
+  }
+  .lead-card.midnight .lead-title { color: var(--mid-text); }
+  .lead-card.sig .lead-title { color: var(--sig-text); }
+  .lead-desc { font-size: 13px; line-height: 1.7; margin-bottom: 32px; }
+  .lead-card.midnight .lead-desc { color: var(--mid-muted); }
+  .lead-card.sig .lead-desc { color: var(--sig-muted); }
+  .lead-form { display: flex; flex-direction: column; gap: 12px; }
+  .lead-input {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px; padding: 12px 16px;
+    border-radius: var(--radius); border: 1px solid; outline: none;
+    background: transparent; width: 100%;
+    transition: border-color 0.3s;
+  }
+  .lead-card.midnight .lead-input {
+    border-color: var(--mid-border); color: var(--mid-text);
+  }
+  .lead-card.midnight .lead-input::placeholder { color: var(--mid-muted); }
+  .lead-card.midnight .lead-input:focus { border-color: var(--mid-accent); }
+  .lead-card.sig .lead-input {
+    border-color: var(--sig-border); color: var(--sig-text);
+  }
+  .lead-card.sig .lead-input::placeholder { color: var(--sig-muted); }
+  .lead-card.sig .lead-input:focus { border-color: var(--sig-accent); }
+  .lead-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 14px; border: none; border-radius: var(--radius);
+    cursor: pointer; transition: opacity 0.3s, transform 0.2s; margin-top: 4px;
+  }
+  .lead-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+  .lead-card.midnight .lead-btn { background: var(--mid-accent); color: #fff; }
+  .lead-card.sig .lead-btn { background: var(--sig-accent); color: #fff; }
+
+  /* ── FOOTER ───────────────────────────────────────────── */
+  footer {
+    padding: 48px; border-top: 1px solid var(--sig-border);
+    background: var(--sig-bg);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-left { font-size: 11px; color: var(--sig-muted); line-height: 1.7; }
+  .footer-left strong { display: block; font-family: 'Syne', sans-serif; font-size: 13px; color: var(--sig-text); margin-bottom: 4px; }
+  .footer-right { font-size: 10px; color: #444; letter-spacing: 0.1em; text-align: right; }
+
+  /* ── SCROLL ANIMATIONS ────────────────────────────────── */
+  .reveal {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* ── TICKER ───────────────────────────────────────────── */
+  .ticker-wrap {
+    overflow: hidden; padding: 14px 0;
+    border-top: 1px solid var(--mid-border);
+    border-bottom: 1px solid var(--mid-border);
+    background: var(--mid-surface);
+  }
+  .ticker {
+    display: flex; gap: 0;
+    animation: ticker 30s linear infinite;
+    white-space: nowrap;
+  }
+  .ticker-item {
+    display: inline-flex; align-items: center; gap: 32px;
+    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--mid-muted); padding: 0 40px;
+  }
+  .ticker-item::after { content: '·'; color: var(--mid-accent); }
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ── RESPONSIVE ───────────────────────────────────────── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    section, .hero, .leads-section { padding: 80px 24px; }
+    .features-grid { grid-template-columns: 1fr; }
+    .sig-layout { grid-template-columns: 1fr; gap: 40px; }
+    .leads-grid { grid-template-columns: 1fr; }
+    .hero-stats { gap: 32px; flex-wrap: wrap; }
+    footer { flex-direction: column; gap: 24px; text-align: center; }
+    .footer-right { text-align: center; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <div class="nav-logo">Total Reality Global</div>
+  <div class="nav-links">
+    <a href="#midnight">Midnight Compliance</a>
+    <a href="#sig">Signal Intelligence</a>
+    <a href="#contact">Contact</a>
+    <a href="#contact" class="nav-cta">Get Access</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-tag">Total Reality Global — Marlborough, MA</div>
+  <h1>Compliance<br>that <em>proves</em><br>itself.</h1>
+  <p class="hero-sub">
+    Hardware-enforced attestation for organizations that cannot afford to guess.
+    From blockchain compliance infrastructure to critical grid protection —
+    cryptographic proof at every layer.
+  </p>
+  <div class="hero-actions">
+    <a href="#midnight" class="btn-primary">Midnight Compliance</a>
+    <a href="#sig" class="btn-ghost">Signal Intelligence Grid →</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">9–14ms</div>
+      <div class="stat-label">Attestation Latency</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">169</div>
+      <div class="stat-label">Compliance Documents</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">2</div>
+      <div class="stat-label">Patent-Pending Platforms</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">20+</div>
+      <div class="stat-label">Years Federal Cybersecurity</div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span class="ticker-item">NERC CIP Compliance</span>
+    <span class="ticker-item">FERC Order 881</span>
+    <span class="ticker-item">NIST SP 800-171</span>
+    <span class="ticker-item">AMD EPYC SEV-SNP</span>
+    <span class="ticker-item">Midnight Blockchain</span>
+    <span class="ticker-item">DNP3 / Modbus</span>
+    <span class="ticker-item">SHA-256 Attestation</span>
+    <span class="ticker-item">IEEE 80 / IEEE 837</span>
+    <span class="ticker-item">ZK Cryptography</span>
+    <span class="ticker-item">NERC CIP Compliance</span>
+    <span class="ticker-item">FERC Order 881</span>
+    <span class="ticker-item">NIST SP 800-171</span>
+    <span class="ticker-item">AMD EPYC SEV-SNP</span>
+    <span class="ticker-item">Midnight Blockchain</span>
+    <span class="ticker-item">DNP3 / Modbus</span>
+    <span class="ticker-item">SHA-256 Attestation</span>
+    <span class="ticker-item">IEEE 80 / IEEE 837</span>
+    <span class="ticker-item">ZK Cryptography</span>
+  </div>
+</div>
+
+<!-- MIDNIGHT SECTION -->
+<section class="midnight-section" id="midnight">
+  <div class="section-tag reveal">Midnight Infrastructure</div>
+  <h2 class="section-h reveal reveal-delay-1">Blockchain compliance<br>for the regulated world.</h2>
+  <p class="section-p reveal reveal-delay-2">
+    Built on the Midnight blockchain with zero-knowledge cryptography, our compliance infrastructure
+    gives healthcare organizations, DeFi platforms, and regulated enterprises tamper-evident,
+    privacy-preserving audit trails that satisfy regulators without exposing sensitive data.
+  </p>
+
+  <div class="features-grid reveal reveal-delay-3">
+    <div class="feature-card">
+      <div class="feature-icon">⬡</div>
+      <div class="feature-title">Zero-Knowledge Privacy</div>
+      <div class="feature-desc">Prove compliance without revealing the underlying data. ZK attestations satisfy regulators while protecting patient, financial, and operational records.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⬡</div>
+      <div class="feature-title">6 AI Compliance Agents</div>
+      <div class="feature-desc">Automated agents monitor, classify, and report across 27 compliance categories. 169 documents continuously indexed and verified against current standards.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⬡</div>
+      <div class="feature-title">NIST SP 800-171 Ready</div>
+      <div class="feature-desc">Hardware-enforced compliance for healthcare and federal contractors. AMD EPYC SEV-SNP trusted execution environments anchor every attestation to silicon.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⬡</div>
+      <div class="feature-title">x402 Payment Protocol</div>
+      <div class="feature-desc">Native Solana integration for compliance-as-a-service billing. Pay per attestation, per report, or on subscription — on-chain and auditable.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⬡</div>
+      <div class="feature-title">Daily Attestation Reports</div>
+      <div class="feature-desc">Automated SEV-SNP attestation at 06:00 UTC daily. Every report cryptographically signed, timestamped, and immutably recorded.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⬡</div>
+      <div class="feature-title">Multi-Chain Treasury</div>
+      <div class="feature-desc">8-network custodial infrastructure across Solana, Ethereum, Bitcoin, Polygon, Avalanche, BSC, Base, and Arbitrum with compliance-layer oversight.</div>
+    </div>
+  </div>
+
+  <a href="#contact" class="btn-primary reveal">Request Midnight Access</a>
+</section>
+
+<!-- TRANSITION BAND -->
+<div class="transition-band">
+  <div class="transition-inner">
+    <div class="transition-label">Two platforms. One foundation.</div>
+    <div class="transition-divider">
+      <div class="t-line-blue"></div>
+      <div class="t-dot"></div>
+      <div class="t-line-copper"></div>
+    </div>
+    <div class="transition-text">
+      From <span class="blue">regulated finance &amp; healthcare</span><br>
+      to <span class="copper">critical grid infrastructure</span> —<br>
+      the same cryptographic proof, different stakes.
+    </div>
+  </div>
+</div>
+
+<!-- SIG SECTION -->
+<section class="sig-section" id="sig">
+  <div class="section-tag reveal">Signal Intelligence Grid</div>
+  <h2 class="section-h reveal reveal-delay-1" style="color: var(--sig-text);">
+    When the grid fails,<br><em style="font-family:'Instrument Serif',serif; color:var(--sig-accent);">data integrity</em><br>is the first casualty.
+  </h2>
+  <p class="section-p reveal reveal-delay-2">
+    Patent-pending platform for hardware-enforced compliance attestation
+    on transmission infrastructure. Ingests live sensor data from DNP3 and Modbus
+    field devices, cryptographically attests each payload at the point of capture,
+    and generates NERC CIP and FERC 881 audit-ready compliance records.
+  </p>
+
+  <div class="sig-layout reveal reveal-delay-3">
+    <div>
+      <div class="sig-specs">
+        <div class="spec-row">
+          <span class="spec-key">Ingest Latency</span>
+          <span class="spec-val highlight">9 – 14ms end-to-end</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Attestation Hardware</span>
+          <span class="spec-val">AMD EPYC SEV-SNP TEE</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Hash Algorithm</span>
+          <span class="spec-val">SHA-256 per record</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Protocols</span>
+          <span class="spec-val">DNP3 · Modbus · SMARTLINE</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Compliance Targets</span>
+          <span class="spec-val">NERC CIP · FERC 881</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Throughput (single node)</span>
+          <span class="spec-val highlight">~70 attestations/sec</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Control Plane Impact</span>
+          <span class="spec-val highlight">Zero</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Patent Status</span>
+          <span class="spec-val">USPTO 63/983,517 — Pending</span>
+        </div>
+      </div>
+
+      <div class="patent-badge">
+        <div class="patent-badge-icon">⚖</div>
+        <div class="patent-badge-text">
+          <strong>Patent Pending — USPTO 63/983,517</strong>
+          Filed February 15, 2026 · Non-provisional due Feb 15, 2027
+        </div>
+      </div>
+    </div>
+
+    <div class="sig-features">
+      <div class="sig-feature">
+        <div class="sig-feature-head">
+          <div class="sig-feature-icon">⚡</div>
+          <div class="sig-feature-title">Field-Edge Attestation</div>
+        </div>
+        <div class="sig-feature-desc">Every data record from Lindsey Systems TLM and SMARTLINE sensors is cryptographically signed at the moment of ingest. The attestation travels with the data from field edge to compliance record — no gap in the chain of custody.</div>
+      </div>
+      <div class="sig-feature">
+        <div class="sig-feature-head">
+          <div class="sig-feature-icon">🔬</div>
+          <div class="sig-feature-title">AI Grounding Research Agent</div>
+        </div>
+        <div class="sig-feature-desc">Daily AI analysis of live telemetry generates IEEE 80, IEEE 81, and IEEE 837-referenced grounding design recommendations. Identifies fault current exposure, GPR risk, and conductor sizing gaps before incidents occur.</div>
+      </div>
+      <div class="sig-feature">
+        <div class="sig-feature-head">
+          <div class="sig-feature-icon">📋</div>
+          <div class="sig-feature-title">Non-Disruptive Architecture</div>
+        </div>
+        <div class="sig-feature-desc">SIG sits downstream of existing SCADA, DMS, and EMS infrastructure. No changes to protection logic or real-time control planes. Subscribes to existing data exports and adds attestation without touching operational systems.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LEAD CAPTURE -->
+<div class="leads-section" id="contact">
+  <div style="text-align:center; margin-bottom: 64px;">
+    <div style="font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--sig-muted); margin-bottom:16px;">Which describes you?</div>
+    <h2 style="font-family:'Syne',sans-serif; font-size:clamp(28px,3.5vw,44px); font-weight:800; color:var(--sig-text); letter-spacing:-0.02em;">
+      Tell us what you're protecting.
+    </h2>
+  </div>
+  <div class="leads-grid">
+
+    <!-- Midnight Lead -->
+    <div class="lead-card midnight">
+      <div class="lead-type">Midnight Infrastructure</div>
+      <div class="lead-title">Healthcare, Finance<br>&amp; Regulated Enterprises</div>
+      <div class="lead-desc">
+        You need compliance documentation that satisfies regulators without exposing sensitive records.
+        Blockchain-anchored, ZK-private, audit-ready — for HIPAA, NIST SP 800-171, and beyond.
+      </div>
+      <div class="lead-form">
+        <input class="lead-input" type="text" placeholder="Organization name">
+        <input class="lead-input" type="email" placeholder="Work email">
+        <input class="lead-input" type="text" placeholder="Compliance framework (HIPAA, NIST, SOC 2...)">
+        <button class="lead-btn" onclick="handleLead('midnight', this)">Request Midnight Access →</button>
+      </div>
+    </div>
+
+    <!-- SIG Lead -->
+    <div class="lead-card sig">
+      <div class="lead-type">Signal Intelligence Grid</div>
+      <div class="lead-title">Utilities, Grid Operators<br>&amp; Equipment OEMs</div>
+      <div class="lead-desc">
+        You operate or monitor transmission infrastructure and need cryptographically verifiable
+        compliance records for NERC CIP, FERC 881, or sensor integration partnerships.
+      </div>
+      <div class="lead-form">
+        <input class="lead-input" type="text" placeholder="Organization name">
+        <input class="lead-input" type="email" placeholder="Work email">
+        <input class="lead-input" type="text" placeholder="Role (Utility / OEM / Integrator / Other)">
+        <button class="lead-btn" onclick="handleLead('sig', this)">Request SIG Access →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <strong>Total Reality Global</strong>
+    Marlborough, MA · Temne Abara Nation<br>
+    midnight-compliance.com · USPTO 63/983,517
+  </div>
+  <div class="footer-right">
+    © 2026 Total Reality Global<br>
+    All platforms patent-pending or patent-protected.<br>
+    Confidential — Not for redistribution.
+  </div>
+</footer>
+
+<script>
+  // ── Scroll-triggered nav mode ──────────────────────────
+  const nav   = document.getElementById('main-nav');
+  const sigEl = document.getElementById('sig');
+  function updateNav() {
+    const sigTop = sigEl.getBoundingClientRect().top;
+    nav.classList.toggle('sig-mode', sigTop < 80);
+  }
+  window.addEventListener('scroll', updateNav, { passive: true });
+
+  // ── Reveal on scroll ───────────────────────────────────
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+
+  // ── Lead form handler ──────────────────────────────────
+  function handleLead(type, btn) {
+    const card   = btn.closest('.lead-card');
+    const inputs = card.querySelectorAll('.lead-input');
+    const vals   = Array.from(inputs).map(i => i.value.trim());
+    if (vals.some(v => !v)) {
+      inputs.forEach(i => { if (!i.value.trim()) i.style.borderColor = '#E05050'; });
+      return;
+    }
+    btn.textContent = type === 'midnight' ? 'Received — We\'ll be in touch.' : 'Received — We\'ll be in touch.';
+    btn.disabled = true;
+    btn.style.opacity = '0.6';
+    inputs.forEach(i => { i.disabled = true; i.style.opacity = '0.5'; });
+    console.log(`Lead captured [${type}]:`, vals);
+  }
+</script>
+</body>
+</html>
