@@ -14,6 +14,17 @@ Usage:
 """
 
 import argparse
+import os
+from pathlib import Path
+
+# Load .env if present
+_env_file = Path(__file__).parent / ".env"
+if _env_file.exists():
+    for line in _env_file.read_text().splitlines():
+        if "=" in line and not line.startswith("#"):
+            k, v = line.split("=", 1)
+            os.environ.setdefault(k.strip(), v.strip())
+
 import json
 import sys
 from datetime import datetime, timezone

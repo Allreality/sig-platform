@@ -16,6 +16,18 @@ from pathlib import Path
 from shared.activity_log import log_event
 from shared.aeo_schema import AGENT_STATE_DIR
 
+import httpx
+
+def _discord(webhook_url: str, message: str):
+    """Post a message to Discord via webhook."""
+    if not webhook_url:
+        return
+    try:
+        httpx.post(webhook_url, json={"content": message}, timeout=5)
+    except Exception:
+        pass
+
+
 BOT_NAME = "health_monitor"
 STATE_FILE = Path(AGENT_STATE_DIR) / "health_monitor_state.json"
 
