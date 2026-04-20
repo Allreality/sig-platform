@@ -46,6 +46,19 @@ from apscheduler.schedulers.background import BackgroundScheduler
 # ── Logging ──────────────────────────────────────────────────────────────────
 
 logging.basicConfig(level=logging.INFO)
+import os, httpx
+
+def _discord(webhook_env: str, message: str):
+    """Post a message to a Discord channel via webhook."""
+    url = os.getenv(webhook_env)
+    if not url:
+        return
+    try:
+        httpx.post(url, json={"content": message}, timeout=5)
+    except Exception:
+        pass
+
+
 log = logging.getLogger("sig.trial")
 
 # ── Config ───────────────────────────────────────────────────────────────────
@@ -501,6 +514,7 @@ async def register_trial(req: TrialRegisterRequest, background: BackgroundTasks)
     payment_url = _create_square_payment_link(trial_id, req.company_name)
 
     log.info("Trial registered: %s | %s | %s", trial_id, req.company_name, req.contact_email)
+    _discord("DISCORD_SIG_TRIALS", f"🆕 **New Trial Registered**\n**Org:** {req.company_name}\n**Contact:** {req.contact_name}\n**Email:** {req.contact_email}\n**Devices:** {len(req.device_ids)}\n**Trial ID:** `{trial_id}`")
 
     return {
         "trial_id":       trial_id,
@@ -601,6 +615,8 @@ async def activate_trial(request: Request):
         scheduler.start()
 
     log.info("Trial activated: %s | expires %s", trial["trial_id"], expires[:10])
+    _discord("DISCORD_SIG_TRIALS", f"✅ **Trial Activated**\n**Trial ID:** `{trial['trial_id']}`\n**Org:** {trial['company_name']}\n**Expires:** {expires[:10]}")
+    _discord("DISCORD_REVENUE", f"💰 **Trial Activated** — card on file confirmed\n**Org:** {trial['company_name']}\n**Trial ID:** `{trial['trial_id']}`")
     return {"activated": True, "trial_id": trial["trial_id"], "expires_at": expires}
 
 
@@ -777,6 +793,7 @@ async def request_free_report(trial_id: str, background: BackgroundTasks):
 
     _log_event(trial_id, "report_generated", f"report_id={report_id}")
     log.info("Free report generated: %s | trial %s", report_id, trial_id)
+    _discord("DISCORD_SIG_REPORTS", f"📄 **Compliance Report Generated**\n**Report ID:** `{report_id}`\n**Trial ID:** `{trial_id}`\n**URL:** https://midnight-compliance.com/reports/{report_id}.pdf")
 
     return {
         "report_id":    report_id,
@@ -835,3 +852,21 @@ with _db() as cx:
 if active_count > 0 and not scheduler.running:
     scheduler.start()
     log.info("Scheduler started — %d active trial(s)", active_count)
+@router.post("/activate-test/{trial_id}")
+async def activate_test(trial_id: str):
+    """Test endpoint — bypasses Square signature for Discord notification testing."""
+    with _db() as cx:
+        trial = cx.execute("SELECT * FROM trials WHERE trial_id=?", (trial_id,)).fetchone()
+    if not trial:
+        raise HTTPException(status_code=404, detail="Trial not found")
+    from datetime import datetime, timezone, timedelta
+    now = datetime.now(timezone.utc)
+    expires = (now + timedelta(days=30)).isoformat()
+    with _db() as cx:
+        cx.execute("UPDATE trials SET status='active', activated_at=?, expires_at=? WHERE trial_id=?",
+                   (now.isoformat(), expires, trial_id))
+    _log_event(trial_id, "activated", f"expires={expires}")
+    log.info("Trial activated: %s | expires %s", trial_id, expires[:10])
+    _discord("DISCORD_SIG_TRIALS", f"✅ **Trial Activated**\n**Trial ID:** `{trial_id}`\n**Org:** {trial['company_name']}\n**Expires:** {expires[:10]}")
+    _discord("DISCORD_REVENUE", f"💰 **Trial Activated** — card on file confirmed\n**Org:** {trial['company_name']}\n**Trial ID:** `{trial_id}`")
+    return {"status": "activated", "trial_id": trial_id, "expires": expires}

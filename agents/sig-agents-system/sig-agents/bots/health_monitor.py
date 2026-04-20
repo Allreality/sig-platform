@@ -30,45 +30,63 @@ THRESHOLDS = {
 # Known reminders
 REMINDERS = [
     {
-        "id": "vpsbg_renewal",
-        "description": "VPSBG server auto-renews Feb 28 2026 — verify BoA card processed",
-        "due_date": "2026-02-26",
-        "priority": "HIGH",
-    },
-    {
-        "id": "vpsbg_2fa",
-        "description": "Enable 2FA on VPSBG account — previously failed, retry",
-        "due_date": None,
-        "priority": "MEDIUM",
-    },
-    {
         "id": "ubuntu_updates",
-        "description": "47 Ubuntu updates applied Feb 22 2026 — monitor for new updates weekly",
-        "due_date": "2026-03-01",
+        "description": "Ubuntu updated Apr 18 2026 — kernel 6.8.0-110 running. Monitor weekly.",
+        "due_date": "2026-04-25",
         "priority": "LOW",
     },
     {
-        "id": "linkedin_premium_cancel",
-        "description": "Cancel LinkedIn Premium by March 15 2026 if no leads convert",
-        "due_date": "2026-03-15",
-        "priority": "MEDIUM",
-    },
-    {
-        "id": "psf_patent",
-        "description": "File PSF provisional patent — discuss with Olayimika first",
-        "due_date": None,
+        "id": "dba_filing",
+        "description": "File TRG DBA at Marlborough City Hall — unlocks SDO, MBE, SBPP, business banking",
+        "due_date": "2026-04-25",
         "priority": "HIGH",
     },
     {
+        "id": "sam_gov_uei",
+        "description": "Follow up SAM.gov UEI assignment — ref INC-GSAFSD20857720",
+        "due_date": "2026-04-22",
+        "priority": "HIGH",
+    },
+    {
+        "id": "sig_trial_live",
+        "description": "SIG trial flow live on midnight-compliance.com — monitor trial registrations",
+        "due_date": None,
+        "priority": "LOW",
+    },
+    {
+        "id": "lindsey_outreach",
+        "description": "Contact Lindsey Systems for SIG pilot partnership — platform demo-ready",
+        "due_date": "2026-04-30",
+        "priority": "HIGH",
+    },
+    {
+        "id": "a2abay_listing",
+        "description": "Publish SIG Agent Card on A2ABay — site was down Apr 18, retry",
+        "due_date": "2026-04-22",
+        "priority": "MEDIUM",
+    },
+    {
+        "id": "square_webhook",
+        "description": "Square webhook live — test full trial activation with real card",
+        "due_date": "2026-04-22",
+        "priority": "MEDIUM",
+    },
+    {
         "id": "midnight_nonprov",
-        "description": "Midnight Compliance non-provisional due Nov 14 2026",
+        "description": "Midnight Compliance non-provisional patent due Nov 14 2026",
         "due_date": "2026-10-01",
         "priority": "HIGH",
     },
     {
         "id": "sig_nonprov",
-        "description": "SIG non-provisional due Feb 15 2027",
+        "description": "SIG non-provisional patent due Feb 15 2027",
         "due_date": "2027-01-01",
+        "priority": "HIGH",
+    },
+    {
+        "id": "sbir_phase1",
+        "description": "SBIR Phase I submission — DOE/DHS/DoD target ~$249K",
+        "due_date": "2026-06-01",
         "priority": "HIGH",
     },
 ]
